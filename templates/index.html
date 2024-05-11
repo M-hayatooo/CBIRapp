@@ -1,7 +1,7 @@
 <html>
 <head>
     <meta http-qeuiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Fastapi　画像認識テスト</title>
+    <title>Fastapi　CBIR テスト</title>
     <script src="//code.jquery.com/jquery-2.2.3.min.js"></script>
     <script src="/static/js/post.js"></script>
 </head>
@@ -10,8 +10,12 @@
 
 <!-- ファイル選択ボタン -->
 <div style="width: 500px">
+  このフォームに<strong>.nii</strong>ファイルをアップロードしてください。
+  <br>
+  .niiファイルのみアップロード可能です。
+  <br><br>
   <form enctype="multipart/form-data" method="post">
-    <input type="file" name="userfile" accept="image/*">
+    <input type="file" name="userfile" accept=".nii">
   </form>
 </div>
 
