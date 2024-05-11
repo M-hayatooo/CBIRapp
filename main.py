@@ -4,6 +4,7 @@ from typing import List
 import database
 import nibabel as nib
 import numpy as np
+import supabase
 import torch
 from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.templating import Jinja2Templates
@@ -38,7 +39,7 @@ async def image_recognition(files: List[UploadFile] = File(...)):
     net.load_state_dict(torch.load("/Imp_RadoBaseplus_epo490.pth"))
 
     net.eval()
-    with torch.no_grad():
+    with torch.inference_mode():
         mu, logvar, cos_sim, feature_rep = net.encoder(x)
         feature_rep = feature_rep.cpu().detach().numpy()
         input_feature_rep = feature_rep[0]
@@ -50,7 +51,7 @@ async def image_recognition(files: List[UploadFile] = File(...)):
         feature_rep_loss = np.linalg.norm(input_feature_rep - case.featuer_rep)
         feature_rep_losses.append(feature_rep_loss)
 
-        
+
     return feature_rep_losses
 
 
@@ -63,10 +64,18 @@ async def cbir_system():
 @app.get("/mris")
 async def get_mris():
     mris = database.get_all_brain_mri()
-    feature_rep_losses = []
-    for case in mris:
+    # feature_rep_losses = []
+    # for case in mris:
+    #     feature_rep_losses.append(case.featuer_rep)
 
-        feature_rep_losses.append(case.featuer_rep)
+    # min_idx = np.argmin(feature_rep_losses)
+    # uid = mris[min_idx].img_path
+    # subject = f"{uid}"
 
+    # res = supabase.storage.from_('mr-images').get_public_url(f'mr-images/{subject}')
 
+    # return res
     return mris
+
+
+
