@@ -15,6 +15,8 @@ class BrainMRI(Base):
     id = Column(Integer, primary_key=True)
     featuer_rep = Column(Text())
     img_path = Column(Text())
+    clinical_info_path = Column(Text())
+
 
 def get_all_brain_mri():
     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
@@ -23,3 +25,15 @@ def get_all_brain_mri():
     # mri = session.query(BrainMRI).first()  # userテーブルの最初のレコードをクラスで返す
 
     return mris
+
+
+# def get_ie_cbir_model_weight():
+#     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
+#     session = SessionClass()
+#     with open(session, 'wb+') as f:
+#         res = supabase.storage.from_('bucket_name').download(source)
+#         f.write(res)
+#     return res
+
+
+
