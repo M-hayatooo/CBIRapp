@@ -2,17 +2,18 @@ import io
 from typing import List
 
 import database
+import ie_cbir_model as model
+import image_process
 import nibabel as nib
 import numpy as np
 import supabase
 import torch
 from fastapi import FastAPI, File, Request, UploadFile
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-import ie_cbir_model as model
-import image_process
-
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
@@ -22,6 +23,25 @@ async def root(request: Request):
 @app.post("/api/image_recognition")
 async def image_recognition(files: List[UploadFile] = File(...)):
     # ここから脳画像の処理
+    # input_stream = io.BytesIO(files[0].file.read())
+    # mr_img = nib.load(input_stream)
+    print("脳画像を処理しています...")
+
+    mr_image = io.BytesIO(await files[0].read())
+    print(mr_image)
+    try:
+        nii_image = nib.load(mr_image)
+    except Exception as e:
+        return {"error": f"ファイルの読み込みに失敗しました: {str(e)}"}
+    
+    mr_image = nib.load(nii_image)
+    img = nib.as_closest_canonical(mr_image)
+    data = img.get_fdata().astype('float32')
+
+    print("脳画像を処理しています...")
+
+    return {"message": "脳画像が正常に処理されました。"}
+
     input_image = files[0].file.read()
     mr_img = (
         nib.squeeze_image(nib.as_closest_canonical(input_image))
