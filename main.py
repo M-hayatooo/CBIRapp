@@ -11,6 +11,7 @@ import torch
 from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from scipy.spatial.distance import cosine
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -22,11 +23,6 @@ async def root(request: Request):
 
 @app.post("/api/image_recognition")
 async def image_recognition(files: List[UploadFile] = File(...)):
-    # ここから脳画像の処理
-    # input_stream = io.BytesIO(files[0].file.read())
-    # mr_img = nib.load(input_stream)
-    print("脳画像を処理しています...")
-
     mr_image = io.BytesIO(await files[0].read())
     print(mr_image)
     try:
@@ -40,16 +36,8 @@ async def image_recognition(files: List[UploadFile] = File(...)):
 
     print("脳画像を処理しています...")
 
-    return {"message": "脳画像が正常に処理されました。"}
-
-    input_image = files[0].file.read()
-    mr_img = (
-        nib.squeeze_image(nib.as_closest_canonical(input_image))
-        .get_fdata()
-        .astype("float32")
-    )
     voxel = np.zeros((1, 80, 112, 80))
-    voxel[0] = mr_img
+    voxel[0] = data
     voxel = image_process.preprocess(voxel)
     
     voxel_ = voxel.astype(np.float32)
@@ -66,13 +54,28 @@ async def image_recognition(files: List[UploadFile] = File(...)):
     
 
     mris = database.get_all_brain_mri()
+    ldrs = database.get_all_ldr()
+    ldr_arrays = [np.fromstring(ldr[0].replace(' ', ''), sep=',') for ldr in ldrs]
+
+    input_array = input_feature_rep
+    similarities = [(i, 1 - cosine(input_array, ldr)) for i, ldr in enumerate(ldr_arrays)]
+    similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
+
+    return {"message": "脳画像が正常に処理されました。"}
+
+    return similarities[:3]
     feature_rep_losses = []
     for case in mris:
         feature_rep_loss = np.linalg.norm(input_feature_rep - case.featuer_rep)
         feature_rep_losses.append(feature_rep_loss)
 
 
-    return feature_rep_losses
+
+def find_top_similar(ldr_arrays, input_ldr, top_n=3):
+    input_array = np.fromstring(input_ldr.replace(' ', ''), sep=',')
+    similarities = [(i, 1 - cosine(input_array, ldr)) for i, ldr in enumerate(ldr_arrays)]
+    similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
+    return similarities[:top_n]
 
 
 
