@@ -13,9 +13,10 @@ Base = declarative_base()
 class BrainMRI(Base):
     __tablename__ = "brain_mris"  # テーブル名を指定
     id = Column(Integer, primary_key=True)
-    featuer_rep = Column(Text())
+    feature_rep = Column(Text())  # featuer_rep = Column(Text())
     img_path = Column(Text())
     clinical_info_path = Column(Text())
+    uid = Column(Integer())
 
 
 def get_all_brain_mri():
@@ -23,9 +24,32 @@ def get_all_brain_mri():
     session = SessionClass()
     mris = session.query(BrainMRI).all()  # userテーブルの全レコードをクラスが入った配列で返す
     # mri = session.query(BrainMRI).first()  # userテーブルの最初のレコードをクラスで返す
+    result = session.query(BrainMRI).filter(BrainMRI.uid == 1).first()
+    
+    low_dimentional_representations = session.query(BrainMRI.uid).all()
+    # 取得したuidのリストを表示
+    for ldr in low_dimentional_representations:
+        print(ldr[0])
+
+    # 結果のチェック
+    if result:
+        # 'latent' 属性の値を取得
+        latent_value = result.latent
+        print("Latent value:", latent_value)
+    else:
+        # uidが1のレコードが見つからなかった場合
+        print("No record found with uid 1.")
 
     return mris
 
+def get_all_ldr():
+    SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
+    session = SessionClass()    
+    # ldrs = session.query(BrainMRI.featuer_rep).all()
+    ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all()
+    # ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all()
+
+    return ldrs
 
 # def get_ie_cbir_model_weight():
 #     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
