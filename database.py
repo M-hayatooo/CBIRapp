@@ -6,8 +6,6 @@ from sqlalchemy.types import Integer, String, Text
 
 engine = create_engine("postgresql+psycopg2://postgres.fnoprhmpeqtrnmpsblfu:Qu7iurPaeaB4yWR@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres")
 
-# user=postgres.fnoprhmpeqtrnmpsblfu password=[YOUR-PASSWORD] host=aws-0-ap-northeast-1.pooler.supabase.com port=6543 dbname=postgres
-
 Base = declarative_base()
 
 class BrainMRI(Base):
