@@ -1,10 +1,10 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-psycopg2-binary
 nibabel
 torch
-# supabase
 scipy
 requests
 numpy
+# psycopg2-binary
+# supabase
