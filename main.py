@@ -138,7 +138,7 @@ async def cbir_system():
     return {"message": "Hello World From Fast API"}
 
 
-@app.get("/mris")
-async def get_mris():
-    mris = database.get_all_brain_mri()
-    return mris
+# @app.get("/mris")
+# async def get_mris():
+#     mris = database.get_all_brain_mri()
+#     return mris
