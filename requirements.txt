@@ -6,3 +6,4 @@ nibabel
 torch
 supabase
 scipy
+requests
