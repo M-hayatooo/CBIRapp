@@ -9,7 +9,6 @@ class BuildingBlock(nn.Module):
     def __init__(self, in_ch, out_ch, stride, bias=False):
         super(BuildingBlock, self).__init__()
         self.res = stride == 1
-#        self.shortcut = self._shortcut()
         self.shortcut = self._shortcut(in_ch, out_ch)
         self.relu = nn.ReLU(inplace=True)
         self.block = nn.Sequential(
@@ -20,9 +19,6 @@ class BuildingBlock(nn.Module):
             nn.Conv3d(out_ch, out_ch, kernel_size=3, stride=1, padding=1, bias=bias),
             nn.BatchNorm3d(out_ch),
         )
-
-    # def _shortcut(self):
-    #     return lambda x: x
 
     def _shortcut(self, in_ch, out_ch):
         if in_ch != out_ch:
@@ -205,9 +201,6 @@ class VAEResNetEncoder(ResNetEncoder):
         super(VAEResNetEncoder, self).__init__(in_ch, block_setting)
         self.mu = nn.Conv3d(self.inner_ch, 1, kernel_size=1, stride=1, bias=True)
         self.var = nn.Conv3d(self.inner_ch, 1, kernel_size=1, stride=1, bias=True)
-        # self.fc = nn.Linear(self.inner_ch, 3)
-        # self.fc = nn.Linear(forth_ch*5*7*5, z_ch*2)
-        # self.down = nn.Linear(z_ch, 50)
         self.Wstar_layer = nn.Linear(1400, 3, bias=False)  # 'bias=False' allows the weights to be the pure representation vectors (not affected by the bias)
 
     def forward(self, x: torch.Tensor):
@@ -217,8 +210,7 @@ class VAEResNetEncoder(ResNetEncoder):
         b_size = mu.size(0)
         z = mu.view(b_size, -1)
         norm_z = z / torch.norm(z, p=2, dim=1, keepdim=True).detach()
-        Wstar = self.Wstar_layer.weight.T # .detach() # Note '.detach()'  ※ Wstarをdetachしないと精度が上がる
-        # detachしてしまうと、fine-tuning時にWstarのバックプロップできない
+        Wstar = self.Wstar_layer.weight.T 
         norm_Wstar = Wstar / torch.norm(Wstar, p=2, dim=0, keepdim=True)
         cosin_similarities = torch.mm(norm_z, norm_Wstar)
         return mu, logvar, cosin_similarities, z
