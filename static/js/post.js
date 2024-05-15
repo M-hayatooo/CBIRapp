@@ -1,4 +1,3 @@
-// 画像をリサイズして、HTMLで表示する
 $(function () {
     var file = null;
     var blob = null;
@@ -23,7 +22,6 @@ $(function () {
         if (!file || !blob) {
             return; // ファイルまたはBlobがなければ何もしない
         }
-
         var fd = new FormData();
         fd.append("files", blob, file.name);
 
@@ -37,13 +35,15 @@ $(function () {
             contentType: false,
         })
         .done(function (data, textStatus, jqXHR) {
-            // 通信が成功した場合、結果を出力する
+            // 通信が成功した場合の処理
             console.log(data);
-            var result = document.getElementById("result");
-            result.innerHTML = "この患者の画像...「" + data.response + "」と類似性あり";
+            // var result = document.getElementById("result");
+            const urls = data.urls.join(',');
+            window.location.href = `/clinical-info?urls=${encodeURIComponent(urls)}`;
+            // window.location.href = '/clinical-info';  // clinical-infoに遷移
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
-            // 通信が失敗した場合、エラーメッセージを出力する
+            // 通信が失敗した場合のエラー出力
             var result = document.getElementById("result");
             result.innerHTML = "サーバーとの通信が失敗した...";
         });
