@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import tempfile
 from typing import List
@@ -11,7 +12,8 @@ import numpy as np
 import requests
 import supabase
 import torch
-from fastapi import FastAPI, File, Request, UploadFile
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from scipy.spatial.distance import cosine
@@ -39,6 +41,7 @@ def load_model_from_supabase(url):
 @app.get("/")
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.post("/api/image_recognition")
 async def image_recognition(files: List[UploadFile] = File(...)):
@@ -85,14 +88,37 @@ async def image_recognition(files: List[UploadFile] = File(...)):
     
     top_three_similar = sorted(similarities, key=lambda x: x[1], reverse=True)[:3]
 
-    for idx, similarity in top_three_similar:
-        print(f"ID: {idx}, Similarity: {similarity}")
+    for url, similarity in top_three_similar:
+        print(f"臨床情報ファイルへのリンク: {url}, Similarity: {similarity}")
+
+    if top_three_similar:
+        return {"urls": [url for url, _ in top_three_similar]}  # 類似したURLをリストで返す
+    else:
+        return {"error": "No similar images found"}
+
+@app.get("/clinical-info")
+async def get_clinical_info(request: Request, urls: str):
+    url_list = urls.split(',')
+    data_list = []
+    for url in url_list:
+        response = requests.get(url)
+        if response.status_code == 200:
+            data_list.append(response.json())
+        else:
+            data_list.append({"error": f"Failed to load data from {url}"})
+
+    return templates.TemplateResponse("clinical_info.html", {"request": request, "data_list": data_list})
 
 
-    return {"message": "脳画像が正常に処理されました。"}
-
-    return similarities[:3]
-
+@app.get("/api/fetch_clinical_info")
+async def fetch_clinical_info(url: str):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # HTTPエラーがあった場合の処理
+        data = response.json()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    return JSONResponse(content=data)
 
 
 def find_top_similar(ldr_arrays, input_ldr, top_n=3):
@@ -111,17 +137,6 @@ async def cbir_system():
 @app.get("/mris")
 async def get_mris():
     mris = database.get_all_brain_mri()
-    # feature_rep_losses = []
-    # for case in mris:
-    #     feature_rep_losses.append(case.featuer_rep)
-
-    # min_idx = np.argmin(feature_rep_losses)
-    # uid = mris[min_idx].img_path
-    # subject = f"{uid}"
-
-    # res = supabase.storage.from_('mr-images').get_public_url(f'mr-images/{subject}')
-
-    # return res
     return mris
 
 
