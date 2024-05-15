@@ -10,7 +10,6 @@ import image_process
 import nibabel as nib
 import numpy as np
 import requests
-import supabase
 import torch
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
@@ -76,7 +75,7 @@ async def image_recognition(files: List[UploadFile] = File(...)):
 
     net.eval()
     with torch.inference_mode():
-        mu, logvar, cos_sim, feature_rep = net.encoder(x)
+        mu, logvar, cos_sim, feature_rep = net.encoder(x) # mu, logvar, cos_sim は使わない
         feature_rep = feature_rep.cpu().detach().numpy()
         input_feature_rep = feature_rep[0]
 
@@ -128,7 +127,6 @@ def find_top_similar(ldr_arrays, input_ldr, top_n=3):
     return similarities[:top_n]
 
 
-
 @app.post("/cbir")
 async def cbir_system():
     return {"message": "Hello World From Fast API"}
@@ -138,6 +136,3 @@ async def cbir_system():
 async def get_mris():
     mris = database.get_all_brain_mri()
     return mris
-
-
-
