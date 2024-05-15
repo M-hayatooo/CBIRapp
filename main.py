@@ -1,12 +1,8 @@
 import io
-import json
 import os
 import tempfile
 from typing import List
 
-import database
-import ie_cbir_model as model
-import image_process
 import nibabel as nib
 import numpy as np
 import requests
@@ -16,6 +12,10 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from scipy.spatial.distance import cosine
+
+import database
+import ie_cbir_model as model
+import image_process
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")

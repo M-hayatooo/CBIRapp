@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.schema import Column
-from sqlalchemy.types import Integer, String, Text
+from sqlalchemy.types import Integer, Text
 
 engine = create_engine("postgresql+psycopg2://postgres.fnoprhmpeqtrnmpsblfu:Qu7iurPaeaB4yWR@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres")
 Base = declarative_base()

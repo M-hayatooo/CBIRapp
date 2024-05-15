@@ -4,6 +4,7 @@ sqlalchemy
 psycopg2-binary
 nibabel
 torch
-supabase
+# supabase
 scipy
 requests
+numpy
