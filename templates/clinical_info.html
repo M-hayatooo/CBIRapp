@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Clinical Data Display</title>
+</head>
+<body>
+    <h1>類似症例の可能性の高い臨床情報の表示</h1>
+    {% if data_list %}
+        {% for data in data_list %}
+            <div>
+                <h2>データ {{ loop.index }}</h2>
+                <pre>{{ data | tojson }}</pre>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>データがありません。</p>
+    {% endif %}
+</body>
+</html>
