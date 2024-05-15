@@ -81,19 +81,25 @@ async def image_recognition(files: List[UploadFile] = File(...)):
 
     input_array = input_feature_rep
 
-    ldrs = database.get_all_ldr()
+    ldrs = database.get_all_ldr_uid()
     ldr_arrays = [(ldr[0], np.array(ldr[1].split(), dtype=float)) for ldr in ldrs]
     similarities = [(ldr[0], 1 - cosine(input_array, ldr[1])) for ldr in ldr_arrays]
     
     top_three_similar = sorted(similarities, key=lambda x: x[1], reverse=True)[:3]
+    top_three_uids = [uid for uid, _ in top_three_similar]
 
-    for url, similarity in top_three_similar:
+    # 類似したUIDに基づいて臨床情報のURLを取得
+    clinical_info_urls = database.get_clinical_info_urls(top_three_uids)
+
+    for uid, url in clinical_info_urls:
+        similarity = next(similarity for uid_, similarity in top_three_similar if uid_ == uid)
         print(f"臨床情報ファイルへのリンク: {url}, Similarity: {similarity}")
 
-    if top_three_similar:
-        return {"urls": [url for url, _ in top_three_similar]}  # 類似したURLをリストで返す
+    if clinical_info_urls:
+        return {"urls": [url for _, url in clinical_info_urls]}
     else:
         return {"error": "No similar images found"}
+    
 
 @app.get("/clinical-info")
 async def get_clinical_info(request: Request, urls: str):
