@@ -5,8 +5,8 @@ from sqlalchemy.schema import Column
 from sqlalchemy.types import Integer, String, Text
 
 engine = create_engine("postgresql+psycopg2://postgres.fnoprhmpeqtrnmpsblfu:Qu7iurPaeaB4yWR@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres")
-
 Base = declarative_base()
+
 
 class BrainMRI(Base):
     __tablename__ = "brain_mris"  # テーブル名を指定
@@ -29,13 +29,10 @@ def get_all_brain_mri():
     for ldr in low_dimentional_representations:
         print(ldr[0])
 
-    # 結果のチェック
     if result:
-        # 'latent' 属性の値を取得
         latent_value = result.latent
         print("Latent value:", latent_value)
     else:
-        # uidが1のレコードが見つからなかった場合
         print("No record found with uid 1.")
 
     return mris
@@ -43,10 +40,8 @@ def get_all_brain_mri():
 def get_all_ldr():
     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
     session = SessionClass()    
-    # ldrs = session.query(BrainMRI.featuer_rep).all()
-    ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all()
-    # ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all()
-
+    ldrs= session.query(BrainMRI.clinical_info_path, BrainMRI.feature_rep).all()
+    # ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all() スペルミス
     return ldrs
 
 # def get_ie_cbir_model_weight():
@@ -56,6 +51,3 @@ def get_all_ldr():
 #         res = supabase.storage.from_('bucket_name').download(source)
 #         f.write(res)
 #     return res
-
-
-
