@@ -37,12 +37,19 @@ def get_all_brain_mri():
 
     return mris
 
-def get_all_ldr():
+def get_all_ldr_uid():
     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
     session = SessionClass()    
-    ldrs= session.query(BrainMRI.clinical_info_path, BrainMRI.feature_rep).all()
+    ldrs= session.query(BrainMRI.uid, BrainMRI.feature_rep).all()
     # ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all() スペルミス
     return ldrs
+
+
+def get_clinical_info_urls(uids):
+    SessionClass = sessionmaker(engine)
+    session = SessionClass()
+    urls = session.query(BrainMRI.uid, BrainMRI.clinical_info_path).filter(BrainMRI.uid.in_(uids)).all()
+    return urls
 
 # def get_ie_cbir_model_weight():
 #     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
