@@ -16,28 +16,13 @@ class BrainMRI(Base):
     clinical_info_path = Column(Text())
     uid = Column(Integer())
 
-# def get_all_brain_mri():
-#     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
-#     session = SessionClass()
-#     mris = session.query(BrainMRI).all()  # userテーブルの全レコードをクラスが入った配列で返す
-#     # mri = session.query(BrainMRI).first()  # userテーブルの最初のレコードをクラスで返す
-#     result = session.query(BrainMRI).filter(BrainMRI.uid == 1).first()    
-#     low_dimentional_representations = session.query(BrainMRI.uid).all()
-#     for ldr in low_dimentional_representations:
-#         print(ldr[0])
-#     if result:
-#         latent_value = result.latent
-#         print("Latent value:", latent_value)
-#     else:
-#         print("No record found with uid 1.")
-#     return mris
 
-def get_all_ldr_uid():
-    SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
-    session = SessionClass()    
-    ldrs= session.query(BrainMRI.uid, BrainMRI.feature_rep).all()
-    # ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all() スペルミス
-    return ldrs
+# def get_all_ldr_uid():
+#     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
+#     session = SessionClass()    
+#     ldrs= session.query(BrainMRI.uid, BrainMRI.feature_rep).all()
+#     # ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all() スペルミス
+#     return ldrs
 
 
 def get_clinical_info_urls(uids):
