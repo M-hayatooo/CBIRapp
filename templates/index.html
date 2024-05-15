@@ -5,22 +5,19 @@
     <script src="//code.jquery.com/jquery-2.2.3.min.js"></script>
     <script src="/static/js/post.js"></script>
 </head>
-
 <body>
 
-<!-- ファイル選択ボタン -->
+
 <div style="width: 500px">
-  このフォームに<strong>.nii</strong>ファイルをアップロードしてください。
-  <br>
+  このフォームに<strong>.nii</strong>ファイルをアップロードしてください。<br>
   <form enctype="multipart/form-data" method="post" id="uploadForm">
     <input type="file" name="userfile" accept=".nii">
-</form>
+  </form>
 </div>
 
-<!-- 画像表示領域 -->
 <canvas id="canvas" width="0" height="0"></canvas>
 
-<!-- アップロード開始ボタン -->
+<!-- アップロードボタン -->
 <button class="btn btn-primary" id="post">投稿</button>
 <br>
 <h2 id="result"></h2>
