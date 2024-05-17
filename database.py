@@ -17,12 +17,12 @@ class BrainMRI(Base):
     uid = Column(Integer())
 
 
-# def get_all_ldr_uid():
-#     SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
-#     session = SessionClass()    
-#     ldrs= session.query(BrainMRI.uid, BrainMRI.feature_rep).all()
-#     # ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all() スペルミス
-#     return ldrs
+def get_all_ldr_uid():
+    SessionClass = sessionmaker(engine)  # セッションを作るクラスを作成
+    session = SessionClass()    
+    ldrs= session.query(BrainMRI.uid, BrainMRI.feature_rep).all()
+    # ldrs= session.query(BrainMRI.id, BrainMRI.feature_rep).all() スペルミス
+    return ldrs
 
 
 def get_clinical_info_urls(uids):
