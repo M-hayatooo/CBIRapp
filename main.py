@@ -3,6 +3,7 @@ import os
 import tempfile
 from typing import List
 
+import image_process
 import nibabel as nib
 import numpy as np
 import requests
@@ -15,7 +16,6 @@ from scipy.spatial.distance import cosine
 
 import database
 import ie_cbir_model as model
-import image_process
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -142,3 +142,14 @@ async def cbir_system():
 # async def get_mris():
 #     mris = database.get_all_brain_mri()
 #     return mris
+
+
+def preprocess(voxel):
+    nonzero = voxel[voxel>0.0] # 平均と標準偏差の計算に輝度0は含めない
+    voxel = np.clip(voxel, 0, np.mean(nonzero) + 2.0*np.std(nonzero))
+    voxel = normalize(voxel, np.min(voxel), np.max(voxel))
+    voxel = voxel[np.newaxis, ]
+    return voxel.astype('f')
+
+def normalize(voxel: np.ndarray, floor: int, ceil: int) -> np.ndarray:
+    return (voxel - floor) / (ceil - floor)
