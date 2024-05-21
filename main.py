@@ -62,7 +62,7 @@ async def image_recognition(files: List[UploadFile] = File(...)):
 
     voxel = np.zeros((1, 80, 112, 80))
     voxel[0] = data
-    voxel = image_process.preprocess(voxel)
+    voxel = preprocess(voxel)
     voxel = voxel.astype(np.float32)
 
     x = torch.from_numpy(voxel).clone()
