@@ -2,7 +2,7 @@ fastapi
 uvicorn[standard]
 sqlalchemy
 nibabel
-torch==1.5.0+cpu
+torch==2.3.0+cpu
 scipy
 requests
 numpy
