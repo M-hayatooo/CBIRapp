@@ -3,7 +3,6 @@ import os
 import tempfile
 from typing import List
 
-import image_process
 import nibabel as nib
 import numpy as np
 import requests
