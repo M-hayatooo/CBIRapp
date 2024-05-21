@@ -3,7 +3,7 @@ uvicorn[standard]
 sqlalchemy
 nibabel
 # torch
-torch==1.5.1+cpu
+torch==1.7.1+cpu
 scipy
 requests
 numpy
